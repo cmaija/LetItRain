@@ -1,0 +1,11 @@
+{
+  "name": "let-it-rain-scripts",
+  "version": "1.0.0",
+  "description": "Bookkeeping Scripts for Let It Rain Finiancial ",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "Claire Anderson",
+  "license": "ISC"
+}
