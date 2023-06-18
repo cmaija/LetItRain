@@ -4,8 +4,15 @@
   "description": "Bookkeeping Scripts for Let It Rain Finiancial ",
   "main": "index.js",
   "scripts": {
-    "test": "test"
+    "build": "tsc",
+    "test": "test",
+    "getAllAccounts": "ts-node -r ./scripts/getAllAccounts.ts"
   },
   "author": "Claire Anderson",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.3.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.3"
+  }
 }
