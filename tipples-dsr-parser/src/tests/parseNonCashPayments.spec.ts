@@ -2,7 +2,7 @@ import { beforeAll, describe, expect, test } from 'vitest'
 import { parseTaxData } from '../util/parseTaxData'
 import { parsedCsv } from './mocks/parsedCsv'
 import { parsedCsvWithRetailWeirdness } from './mocks/parsedCsvWithRetailWeirdness'
-import { Comps, parseComps } from '../util/parseComps'
+import { parseComps } from '../util/parseComps'
 import {
   NonCashPayments,
   parseNonCashPayments,
