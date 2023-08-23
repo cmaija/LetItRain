@@ -6,8 +6,13 @@ export interface Tips {
   total: number
 }
 
-export function parseTips(csv: string[][]): Tips | undefined {
-  if (!csv || !csv.length) return
+export function parseTips(csv: string[][]): Tips {
+  if (!csv || !csv.length)
+    return {
+      'Charge Tips': 0,
+      AutoGratuity: 0,
+      total: 0,
+    }
   const tipsByPaymentTypeTitleIdx = findRowIdx(csv, (row: string[]) =>
     row.includes('Tips by Payment Type')
   )

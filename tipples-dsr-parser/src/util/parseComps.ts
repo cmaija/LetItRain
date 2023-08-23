@@ -11,7 +11,7 @@ function findCompsRangeEndIdx(csv: string[][], compsStartRow: number): number {
 export function parseComps(
   csv: string[][],
   totalsEnd: number
-): { comps: Comps | undefined; compsSectionEnd: number } {
+): { comps: Comps; compsSectionEnd: number } {
   let comps: Comps = {}
   let compsStart = totalsEnd
   let compsEnd = findCompsRangeEndIdx(csv, compsStart)

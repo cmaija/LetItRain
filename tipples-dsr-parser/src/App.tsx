@@ -9,6 +9,8 @@ import {
   NonCashPayments,
   parseNonCashPayments,
 } from './util/parseNonCashPayments'
+import { Tips } from './util/parseTips'
+import { CashData } from './util/parseCash'
 
 function App() {
   const [csv, setCsv] = useState<any[]>([])
@@ -47,6 +49,9 @@ function App() {
   const [totalTaxes, setTotalTaxes] = useState<number>()
   const [comps, setComps] = useState<Comps>()
   const [nonCashPayments, setNonCashPayments] = useState<NonCashPayments>()
+  const [tips, setTips] = useState<Tips>()
+  const [cashPauments, setCashPayments] = useState<CashData>()
+
   useEffect(() => {
     if (csv && csv.length > 0) {
       let salesInfo = parseSalesByCategory(csv)

@@ -26,3 +26,16 @@ export function parseCol(row: string[], colName: string): number {
     (col: string) => col.toLowerCase() === colName.toLowerCase()
   )
 }
+
+/*
+ * @function parseColWithTest
+ * @description Find the index of a column in a row.
+ * @param {string[]} row - The row row to search.
+ * @param {function} colTest - The test to run on each column. If the test returns true, the column is considered a match.
+ */
+export function parseColWithTest(
+  row: string[],
+  colTest: (col: string) => boolean
+) {
+  return row.findIndex((col: string) => colTest(col))
+}

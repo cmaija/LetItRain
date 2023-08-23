@@ -1,15 +1,28 @@
 export interface NonCashPayments {
   [paymentType: string]: number
+  Checking: number
+  ['PPD Revenue']: number
 }
 
 export function parseNonCashPayments(
   csv: string[][],
   compsEnd: number
 ): {
-  nonCashPayments: NonCashPayments | undefined
+  nonCashPayments: NonCashPayments
   nonCashPaymentsSectionEnd: number
 } {
-  let nonCashPayments: NonCashPayments = {}
+  if (!csv || !csv.length)
+    return {
+      nonCashPayments: {
+        Checking: 0,
+        ['PPD Revenue']: 0,
+      },
+      nonCashPaymentsSectionEnd: -1,
+    }
+  let nonCashPayments: NonCashPayments = {
+    Checking: 0,
+    ['PPD Revenue']: 0,
+  }
   let nonCashPaymentsHeaderIdx = csv.findIndex((row, index) => {
     if (
       index > compsEnd &&

@@ -10,13 +10,12 @@ describe('parseTips', () => {
       tipsData = parseTips(parsedCsv)
     })
 
-    test('it should properly parse comps data ', () => {
+    test('it should properly parse tips data ', () => {
       expect(tipsData).toBeDefined()
       if (tipsData) {
         expect(tipsData['Charge Tips']).toEqual(309.9)
         expect(tipsData.AutoGratuity).toEqual(1389.0)
         expect(tipsData.total).toEqual(1698.9)
-        800.2
       }
     })
   })
@@ -27,7 +26,7 @@ describe('parseTips', () => {
       tipsData = parseTips(parsedCsvWithRetailWeirdness)
     })
 
-    test('it should properly parse comps data ', () => {
+    test('it should properly parse tips data ', () => {
       expect(tipsData).toBeDefined()
       if (tipsData) {
         expect(tipsData['Charge Tips']).toEqual(0)

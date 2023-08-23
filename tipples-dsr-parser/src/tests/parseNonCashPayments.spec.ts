@@ -21,7 +21,7 @@ describe('parseNonCashPayments', () => {
       paymentsData = payments?.nonCashPayments
     })
 
-    test('it should properly parse comps data ', () => {
+    test('it should properly parse non cash payments data ', () => {
       expect(paymentsData).toBeDefined()
       if (paymentsData) {
         expect(paymentsData['AMEX']).toEqual(1803.98)
@@ -50,7 +50,7 @@ describe('parseNonCashPayments', () => {
       paymentsData = payments?.nonCashPayments
     })
 
-    test('it should correctly parse the comps data', () => {
+    test('it should correctly parse the non cash payments data', () => {
       expect(paymentsData).toBeDefined()
       if (paymentsData) {
         expect(Object.keys(paymentsData).length).toBe(3)

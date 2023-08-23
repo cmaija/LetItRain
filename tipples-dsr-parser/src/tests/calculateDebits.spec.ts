@@ -1,0 +1,61 @@
+import { beforeAll, describe, expect, test } from 'vitest'
+import { parseTaxData } from '../util/parseTaxData'
+import { parsedCsv } from './mocks/parsedCsv'
+import { parsedCsvWithRetailWeirdness } from './mocks/parsedCsvWithRetailWeirdness'
+import { parseComps } from '../util/parseComps'
+import { parseNonCashPayments } from '../util/parseNonCashPayments'
+import { calculateDebits } from '../util/calculateDebits'
+import { parseCash } from '../util/parseCash'
+
+describe('calculateDebits', () => {
+  describe('when given a typical csv', () => {
+    let debits: number
+    beforeAll(() => {
+      let taxes = parseTaxData(parsedCsv)
+      let comps = parseComps(parsedCsv, taxes?.taxesSectionEnd || 0)
+      let payments = parseNonCashPayments(
+        parsedCsv,
+        comps?.compsSectionEnd || 0
+      )
+      let cash = parseCash(parsedCsv)
+
+      debits = calculateDebits({
+        nonCashPayments: payments.nonCashPayments,
+        comps: comps.comps,
+        cashData: cash,
+      })
+    })
+
+    test('it should properly determine the debit amount', () => {
+      expect(debits).toBeDefined()
+      expect(debits).toBeCloseTo(13734.56, 4)
+    })
+  })
+
+  describe('when given a weird csv', () => {
+    let debits: number
+    beforeAll(() => {
+      let taxes = parseTaxData(parsedCsvWithRetailWeirdness)
+      let comps = parseComps(
+        parsedCsvWithRetailWeirdness,
+        taxes?.taxesSectionEnd || 0
+      )
+      let payments = parseNonCashPayments(
+        parsedCsvWithRetailWeirdness,
+        comps?.compsSectionEnd || 0
+      )
+      let cash = parseCash(parsedCsvWithRetailWeirdness)
+
+      debits = calculateDebits({
+        nonCashPayments: payments.nonCashPayments,
+        comps: comps.comps,
+        cashData: cash,
+      })
+    })
+
+    test('it should properly determine the debit amount', () => {
+      expect(debits).toBeDefined()
+      expect(debits).toBeCloseTo(3763.95, 4)
+    })
+  })
+})

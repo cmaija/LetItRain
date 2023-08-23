@@ -71,16 +71,6 @@ export function fixCategoryTotals(
   return correctedCategories
 }
 
-export interface SalesByCategoryData {
-  salesByCategoryIdx: number
-  salesCol: number
-  taxesCol: number
-  compsCol: number
-  totalSalesAndCompsByCategory?: TotalsByCategory | null
-  totalComps: number
-  totalNetSales: number
-}
-
 function aggregateCategories(
   csv: any,
   salesCol: number,
@@ -93,23 +83,29 @@ function aggregateCategories(
   let totalSales: TotalsByCategory = {}
   categories.forEach((category: string[]) => {
     let categoryNameIdx = category.findIndex((value) => value !== '\n" "')
-    let categoryStats = {
-      netSales: parseFloat(category[salesCol]),
-      comps: parseFloat(category[compsCol]),
-      taxes: parseFloat(category[taxesCol]),
-      total: parseFloat(category[salesCol]) + parseFloat(category[compsCol]),
+    // regex that tests to see if a string is only spaces
+    let onlySpacesRegex = /^\s*$/
+    if (!onlySpacesRegex.test(category[categoryNameIdx])) {
+      let categoryStats = {
+        netSales: parseFloat(category[salesCol]),
+        comps: parseFloat(category[compsCol]),
+        taxes: parseFloat(category[taxesCol]),
+        total: parseFloat(category[salesCol]) + parseFloat(category[compsCol]),
+      }
+      totalSales[category[categoryNameIdx]] = categoryStats
     }
-    totalSales[category[categoryNameIdx]] = categoryStats
   })
 
   return totalSales
 }
 export function parseSalesByCategory(
   csv: any
-):
-  | { sales: TotalsByCategory | undefined; salesSectionEnd: number }
-  | undefined {
-  if (!csv || !csv.length) return
+): { sales: TotalsByCategory; salesSectionEnd: number } | undefined {
+  if (!csv || !csv.length)
+    return {
+      sales: {},
+      salesSectionEnd: -1,
+    }
   let headersIdx: number | undefined = findRowIdx(csv, (value: string[]) =>
     value.includes('Sales Categories')
   )

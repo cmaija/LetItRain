@@ -1,13 +1,22 @@
 import { parseCol, findRowIdx } from './shared'
 
-export function parseTaxData(
-  csv: string[][]
-): { taxes: number | undefined; taxesSectionEnd: number } | undefined {
-  if (!csv || !csv.length) return
+export function parseTaxData(csv: string[][]): {
+  taxes: number
+  taxesSectionEnd: number
+} {
+  if (!csv || !csv.length)
+    return {
+      taxes: 0,
+      taxesSectionEnd: -1,
+    }
   const salesCategoriesRangeStart = findRowIdx(csv, (value: string[]) =>
     value.includes('Sales Categories')
   )
-  if (!salesCategoriesRangeStart) return
+  if (!salesCategoriesRangeStart)
+    return {
+      taxes: 0,
+      taxesSectionEnd: -1,
+    }
 
   const taxCol = parseCol(csv[salesCategoriesRangeStart], 'Taxes')
 
@@ -22,8 +31,10 @@ export function parseTaxData(
     throw new Error('No totals row found')
   }
 
+  let taxes = parseFloat(totalsRow[taxCol])
+
   return {
-    taxes: parseFloat(totalsRow[taxCol]),
+    taxes: isNaN(taxes) ? 0 : taxes,
     taxesSectionEnd: totalsIdx + 1,
   }
 }
