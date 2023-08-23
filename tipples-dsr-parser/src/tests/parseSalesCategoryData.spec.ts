@@ -8,7 +8,8 @@ describe('useSalesCategoryData', () => {
   describe('when given a normal looking csv', () => {
     let salesByCategoryData: TotalsByCategory | undefined
     beforeAll(() => {
-      salesByCategoryData = parseSalesByCategory(parsedCsv)
+      let sales = parseSalesByCategory(parsedCsv)
+      salesByCategoryData = sales?.sales
     })
 
     test('should correctly parse dumpling data', () => {
@@ -106,9 +107,9 @@ describe('useSalesCategoryData', () => {
   describe('when given a valid sheet with non common values', () => {
     let weirdSalesData: TotalsByCategory | undefined
     beforeAll(() => {
-      weirdSalesData = parseSalesByCategory(parsedCsvWithRetailWeirdness)
+      let sales = parseSalesByCategory(parsedCsvWithRetailWeirdness)
+      weirdSalesData = sales?.sales
     })
-
     test('should correctly parse dumpling data', () => {
       expect(weirdSalesData).toBeDefined()
       if (weirdSalesData) {

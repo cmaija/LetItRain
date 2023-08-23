@@ -1,4 +1,5 @@
 import { TotalsByCategory } from './interfaces'
+import { findRowIdx, parseCol } from './shared'
 
 const SF_SALES_TAX = 0.08625
 /*
@@ -80,32 +81,6 @@ export interface SalesByCategoryData {
   totalNetSales: number
 }
 
-export function parseSalesByCategoryIdx(csv: any): number | undefined {
-  if (csv && csv.length) {
-    return csv.findIndex((value: string[]) =>
-      value.includes('Sales Categories')
-    )
-  }
-}
-
-export function parseCol(headers: string[], headerName: string): number {
-  return headers.findIndex(
-    (header: string) => header.toLowerCase() === headerName.toLowerCase()
-  )
-}
-
-function parseSalesByCategoryRange(
-  csv: any,
-  salesByCategoryIdx: number
-): [startIdx: number, endIdx: number] {
-  let endOfSalesCategoriesRange = csv.findIndex(
-    (row: string[], index: any) =>
-      index > salesByCategoryIdx && row.some((value) => /^-+$/g.test(value))
-  )
-
-  return [salesByCategoryIdx + 1, endOfSalesCategoriesRange - 1]
-}
-
 function aggregateCategories(
   csv: any,
   salesCol: number,
@@ -135,7 +110,9 @@ export function parseSalesByCategory(
   | { sales: TotalsByCategory | undefined; salesSectionEnd: number }
   | undefined {
   if (!csv || !csv.length) return
-  let headersIdx: number | undefined = parseSalesByCategoryIdx(csv)
+  let headersIdx: number | undefined = findRowIdx(csv, (value: string[]) =>
+    value.includes('Sales Categories')
+  )
 
   if (!headersIdx) {
     throw new Error(
@@ -148,7 +125,12 @@ export function parseSalesByCategory(
   let compsCol: number = parseCol(headers, 'Comps')
 
   // Get the range of the rows that contain sales by category information (Meat, Dumplings, Tickets etc)
-  const [startIdx, endIdx] = parseSalesByCategoryRange(csv, headersIdx)
+  const startIdx = headersIdx + 1
+  const endIdx = findRowIdx(
+    csv,
+    (row) => row.some((value) => /^-+$/g.test(value)),
+    headersIdx
+  )
 
   let totalSalesAndCompsByCategory: TotalsByCategory = aggregateCategories(
     csv,
