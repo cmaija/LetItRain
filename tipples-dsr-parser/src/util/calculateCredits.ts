@@ -10,7 +10,7 @@ export function calculateCredits(input: {
 }): number {
   let extrasCash = 0
   if (input.cashData && input.cashData.extraCash < 0) {
-    extrasCash = input.cashData.extraCash
+    extrasCash = input.cashData.extraCash * -1
   }
 
   let salesTotal = input.salesCategoryData

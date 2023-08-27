@@ -6,6 +6,7 @@ import { parseComps } from '../util/parseComps'
 import { parseNonCashPayments } from '../util/parseNonCashPayments'
 import { calculateDebits } from '../util/calculateDebits'
 import { parseCash } from '../util/parseCash'
+import { parsedCsvWithNegativeExtrasCash } from './mocks/parsedCsvWithNegativeExtrasCash'
 
 describe('calculateDebits', () => {
   describe('when given a typical csv', () => {
@@ -56,6 +57,33 @@ describe('calculateDebits', () => {
     test('it should properly determine the debit amount', () => {
       expect(debits).toBeDefined()
       expect(debits).toBeCloseTo(3763.95, 4)
+    })
+  })
+
+  describe('when given a csv with negative estras cash', () => {
+    let debits: number
+    beforeAll(() => {
+      let taxes = parseTaxData(parsedCsvWithNegativeExtrasCash)
+      let comps = parseComps(
+        parsedCsvWithNegativeExtrasCash,
+        taxes?.taxesSectionEnd || 0
+      )
+      let payments = parseNonCashPayments(
+        parsedCsvWithNegativeExtrasCash,
+        comps?.compsSectionEnd || 0
+      )
+      let cash = parseCash(parsedCsvWithNegativeExtrasCash)
+
+      debits = calculateDebits({
+        nonCashPayments: payments.nonCashPayments,
+        comps: comps.comps,
+        cashData: cash,
+      })
+    })
+
+    test('it should properly determine the debit amount', () => {
+      expect(debits).toBeDefined()
+      expect(debits).toBeCloseTo(12239.0, 4)
     })
   })
 })

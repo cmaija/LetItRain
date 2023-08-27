@@ -6,6 +6,7 @@ import { calculateCredits } from '../util/calculateCredits'
 import { parseCash } from '../util/parseCash'
 import { parseSalesByCategory } from '../util/parseSalesCategoryData'
 import { parseTips } from '../util/parseTips'
+import { parsedCsvWithNegativeExtrasCash } from './mocks/parsedCsvWithNegativeExtrasCash'
 
 describe('calculateCredits', () => {
   describe('when given a typical csv', () => {
@@ -49,6 +50,33 @@ describe('calculateCredits', () => {
     test('it should properly determine the credit amount', () => {
       expect(credits).toBeDefined()
       expect(credits).toBeCloseTo(3763.95, 4)
+    })
+  })
+
+  describe('when given a csv with negative extras cash', () => {
+    let credits: number
+    beforeAll(() => {
+      let sales = parseSalesByCategory(parsedCsvWithNegativeExtrasCash)
+      let tips = parseTips(parsedCsvWithNegativeExtrasCash)
+      let taxes = parseTaxData(parsedCsvWithNegativeExtrasCash)
+      let cash = parseCash(parsedCsvWithNegativeExtrasCash)
+
+      console.log(sales)
+      console.log(tips)
+      console.log(taxes)
+      console.log(cash)
+
+      credits = calculateCredits({
+        salesCategoryData: sales?.sales || {},
+        taxes: taxes?.taxes || 0,
+        tips: tips,
+        cashData: cash,
+      })
+    })
+
+    test('it should properly determine the credit amount', () => {
+      expect(credits).toBeDefined()
+      expect(credits).toBeCloseTo(12239.0, 4)
     })
   })
 })

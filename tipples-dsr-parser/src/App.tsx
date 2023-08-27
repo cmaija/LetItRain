@@ -56,6 +56,7 @@ function App() {
   const [credits, setCredits] = useState<number>()
   const [debits, setDebits] = useState<number>()
   useEffect(() => {
+    console.log(csv)
     if (csv && csv.length > 0) {
       let salesInfo = parseSalesByCategory(csv)
       setSalesByCategory(salesInfo?.sales)
