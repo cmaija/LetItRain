@@ -47,6 +47,8 @@ export function fixCategoryTotals(
 
   let retailTaxes = retail.taxes
   let retailSales = retail.netSales
+  let retailComps = retail.comps
+  let retailCompsActual = 0
   let retailSalesActual = 0
   let ticketSalesFromRetailSalesCategory = retailSales
   if (retailTaxes > 0) {
@@ -59,14 +61,21 @@ export function fixCategoryTotals(
   }
 
   correctedCategories[retailKey].netSales = retailSalesActual
+  correctedCategories[retailKey].comps = retailCompsActual
   correctedCategories[retailKey].total = retailSalesActual
 
   let ticketSalesBeforeCorrection = correctedCategories[ticketsKey].netSales
+  let ticketCompsBeforeCorrection = correctedCategories[ticketsKey].comps
   correctedCategories[ticketsKey].netSales =
     ticketSalesBeforeCorrection + ticketSalesFromRetailSalesCategory
 
+  correctedCategories[ticketsKey].comps =
+    ticketCompsBeforeCorrection + retailComps
+
   correctedCategories[ticketsKey].total =
-    ticketSalesBeforeCorrection + ticketSalesFromRetailSalesCategory
+    ticketSalesBeforeCorrection +
+    ticketSalesFromRetailSalesCategory +
+    correctedCategories[ticketsKey].comps
 
   return correctedCategories
 }

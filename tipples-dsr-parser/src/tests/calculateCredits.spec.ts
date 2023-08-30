@@ -61,11 +61,6 @@ describe('calculateCredits', () => {
       let taxes = parseTaxData(parsedCsvWithNegativeExtrasCash)
       let cash = parseCash(parsedCsvWithNegativeExtrasCash)
 
-      console.log(sales)
-      console.log(tips)
-      console.log(taxes)
-      console.log(cash)
-
       credits = calculateCredits({
         salesCategoryData: sales?.sales || {},
         taxes: taxes?.taxes || 0,

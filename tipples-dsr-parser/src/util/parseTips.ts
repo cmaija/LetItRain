@@ -7,12 +7,12 @@ export interface Tips {
 }
 
 export function parseTips(csv: string[][]): Tips {
-  if (!csv || !csv.length)
-    return {
-      'Charge Tips': 0,
-      AutoGratuity: 0,
-      total: 0,
-    }
+  let tips: Tips = {
+    'Charge Tips': 0,
+    AutoGratuity: 0,
+    total: 0,
+  }
+  if (!csv || !csv.length) return tips
   const tipsByPaymentTypeTitleIdx = findRowIdx(csv, (row: string[]) =>
     row.includes('Tips by Payment Type')
   )
@@ -22,6 +22,9 @@ export function parseTips(csv: string[][]): Tips {
     (row: string[]) => row.includes('Payment Type'),
     tipsByPaymentTypeTitleIdx
   )
+
+  if (tipsCategoriesHeaderIdx === -1) return tips
+  if (tipsByPaymentTypeTitleIdx === -1) return tips
 
   const chargeTipsColIdx = parseCol(csv[tipsCategoriesHeaderIdx], 'Charge Tips')
   const autoGratTipsColIdx = parseCol(

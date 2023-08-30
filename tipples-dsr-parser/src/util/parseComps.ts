@@ -8,12 +8,24 @@ function findCompsRangeEndIdx(csv: string[][], compsStartRow: number): number {
   })
 }
 
+function findCompsRangeStartIdx(
+  csv: string[][],
+  compsStartRow: number
+): number {
+  return csv.findIndex((row, index) => {
+    return (
+      index >= compsStartRow &&
+      row.some((value) => value.toLowerCase() === 'comps')
+    )
+  })
+}
+
 export function parseComps(
   csv: string[][],
   totalsEnd: number
 ): { comps: Comps; compsSectionEnd: number } {
   let comps: Comps = {}
-  let compsStart = totalsEnd
+  let compsStart = findCompsRangeStartIdx(csv, totalsEnd)
   let compsEnd = findCompsRangeEndIdx(csv, compsStart)
 
   let compsRange = csv.slice(compsStart, compsEnd)

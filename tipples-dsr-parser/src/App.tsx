@@ -13,6 +13,7 @@ import { Tips, parseTips } from './util/parseTips'
 import { CashData, parseCash } from './util/parseCash'
 import { calculateCredits } from './util/calculateCredits'
 import { calculateDebits } from './util/calculateDebits'
+import QboLoginButton from './components/QboLoginButton'
 
 function App() {
   const [csv, setCsv] = useState<any[]>([])
@@ -56,7 +57,6 @@ function App() {
   const [credits, setCredits] = useState<number>()
   const [debits, setDebits] = useState<number>()
   useEffect(() => {
-    console.log(csv)
     if (csv && csv.length > 0) {
       let salesInfo = parseSalesByCategory(csv)
       setSalesByCategory(salesInfo?.sales)
@@ -309,6 +309,7 @@ function App() {
           <strong>{credits}</strong>
         </div>
       </div>
+      <QboLoginButton />
       <div>
         <FileUploader onCompleteUpload={handleCompletedUpload} />
         {csv &&
