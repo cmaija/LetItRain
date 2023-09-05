@@ -1,7 +1,21 @@
-export interface NonCashPayments {
-  [paymentType: string]: number
-  Checking: number
-  ['PPD Revenue']: number
+import { NonCashPayments } from './interfaces'
+
+export function calculateChecking(nonCashPayments: NonCashPayments): number {
+  return Object.keys(nonCashPayments)
+    .filter(
+      (key) =>
+        key !== 'OT' &&
+        key !== 'Redeem PDR' &&
+        key !== 'Checking' &&
+        key !== 'PPD Revenue'
+    )
+    .reduce((acc, key) => acc + nonCashPayments[key], 0)
+}
+
+export function calculatePPDRevenue(nonCashPayments: NonCashPayments): number {
+  return Object.keys(nonCashPayments)
+    .filter((key) => key === 'OT' || key === 'Redeem PDR')
+    .reduce((acc, key) => acc + nonCashPayments[key], 0)
 }
 
 export function parseNonCashPayments(
@@ -59,13 +73,8 @@ export function parseNonCashPayments(
       }
     })
 
-  nonCashPayments['Checking'] = Object.keys(nonCashPayments)
-    .filter((key) => key !== 'OT' && key !== 'Redeem PDR')
-    .reduce((acc, key) => acc + nonCashPayments[key], 0)
-
-  nonCashPayments['PPD Revenue'] = Object.keys(nonCashPayments)
-    .filter((key) => key === 'OT' || key === 'Redeem PDR')
-    .reduce((acc, key) => acc + nonCashPayments[key], 0)
+  nonCashPayments['Checking'] = calculateChecking(nonCashPayments)
+  nonCashPayments['PPD Revenue'] = calculatePPDRevenue(nonCashPayments)
 
   return {
     nonCashPayments,

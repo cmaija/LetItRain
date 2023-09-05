@@ -1,6 +1,4 @@
-export interface Comps {
-  [compName: string]: number
-}
+import { Comps } from './interfaces'
 
 function findCompsRangeEndIdx(csv: string[][], compsStartRow: number): number {
   return csv.findIndex((row, index) => {

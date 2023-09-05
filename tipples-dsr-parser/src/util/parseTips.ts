@@ -1,10 +1,5 @@
+import { Tips } from './interfaces'
 import { findRowIdx, parseCol } from './shared'
-
-export interface Tips {
-  'Charge Tips': number
-  AutoGratuity: number
-  total: number
-}
 
 export function parseTips(csv: string[][]): Tips {
   let tips: Tips = {

@@ -39,3 +39,35 @@ export function parseColWithTest(
 ) {
   return row.findIndex((col: string) => colTest(col))
 }
+
+export function generateReportDate(csv: any): Date {
+  const reportDateRowIdx = findRowIdx(csv, (row: string[]) =>
+    row[0].includes('Sales Report')
+  )
+
+  let date = csv[reportDateRowIdx + 1][0]
+  let newLineRegex = /(\r\n|\n|\r)/gm
+  date = date.replace(newLineRegex, '')
+
+  return new Date(date)
+}
+
+export function convertToMoneyString(value: string | number): string {
+  if (typeof value === 'string') {
+    return parseFloat(value).toFixed(2)
+  }
+
+  return value.toFixed(2)
+}
+
+export function convertToMoneyNumber(
+  value: string | number,
+  digits: number = 2,
+  base: number = 10
+): number {
+  if (typeof value === 'string') {
+    return convertToMoneyNumber(parseFloat(value), digits, base)
+  }
+  const pow = Math.pow(base ?? 10, digits)
+  return Math.round(value * pow) / pow
+}

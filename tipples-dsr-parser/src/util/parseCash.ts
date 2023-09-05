@@ -1,9 +1,8 @@
+import { CashData } from './interfaces'
 import { findRowIdx, parseCol, parseColWithTest } from './shared'
 
-export interface CashData {
-  cashTaken: number
-  pettyCash: number
-  extraCash: number
+export function calculateExtrasCash(cashTaken: number, pettyCash: number) {
+  return cashTaken - pettyCash
 }
 
 export function parseCash(csv: string[][]): CashData {
@@ -23,7 +22,7 @@ export function parseCash(csv: string[][]): CashData {
 
   let depositSectionStartIdx = findRowIdx(
     csv,
-    (row: string[]) => !!row.find((col) => col.includes('(calcualted'))
+    (row: string[]) => !!row.find((col) => col.includes('(calculated)'))
   )
 
   let depositOfInterestRowIdx = findRowIdx(
@@ -44,7 +43,7 @@ export function parseCash(csv: string[][]): CashData {
     pettyCash = parseFloat(csv[depositOfInterestRowIdx][depositLabelColIdx + 1])
   }
 
-  let extraCash = cashTaken - pettyCash
+  let extraCash = calculateExtrasCash(cashTaken, pettyCash)
 
   return {
     cashTaken,
