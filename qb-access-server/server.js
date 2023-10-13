@@ -1,15 +1,16 @@
-import dotenv from "dotenv";
+import { MongoClient, ObjectID } from "mongodb";
 import cors from "cors";
 import express from "express";
 import path from "path";
 import OAuthClient from "intuit-oauth";
 import bodyParser from "body-parser";
 import ngrok from "ngrok";
+import Csrf from "csrf";
 
 const app = express();
 const ngrokServer = process.env.NGROK_ENABLED === "true" ? ngrok : null;
 const allowedOrigins = ["http://localhost:5173/", "http://localhost:5174/"];
-dotenv.config();
+
 app.use(
   cors({
     origin: function (origin, callback) {
@@ -27,8 +28,9 @@ app.use(
   })
 );
 app.use(bodyParser.json());
+const urlencodedParser = bodyParser.urlencoded({ extended: true });
 
-const urlencodedParser = bodyParser.urlencoded({ extended: false });
+const client = new MongoClient(process.env.ATLAS_URI);
 
 /**
  * App Variables
@@ -36,6 +38,12 @@ const urlencodedParser = bodyParser.urlencoded({ extended: false });
  */
 let oauth2_token_json = null;
 let redirectUri = "";
+let csrfProtection = Csrf();
+
+function generateAntiForgery(session) {
+  session.secret = csrfProtection.secretSync();
+  return csrfProtection.create(session.secret);
+}
 
 /**
  * Instantiate new Client
@@ -72,7 +80,7 @@ app.get("/authorize", urlencodedParser, function (req, res) {
 
   const authUri = oauthClient.authorizeUri({
     scope: [OAuthClient.scopes.Accounting],
-    state: "intuit-test",
+    state: generateAntiForgery(req.session),
   });
   console.log(authUri);
   res.json(authUri);
@@ -85,18 +93,9 @@ app.get("logged-id", (req, res) => {
 /**
  * Handle the callback to extract the `Auth Code` and exchange them for `Bearer-Tokens`
  */
-app.get("/callback", function (req, res) {
-  console.log("hello!");
-  console.log(req);
-  console.log(req.url);
-  oauthClient
-    .createToken(req.url)
-    .then(function (authResponse) {
-      oauth2_token_json = JSON.stringify(authResponse.getJson(), null, 2);
-    })
-    .catch(function (e) {
-      console.error(e);
-    });
+app.get("/callback", async function (req, res) {
+  const authResponse = await oauthClient.createToken(req.url);
+  oauth2_token_json = JSON.stringify(authResponse.getJson(), null, 2);
 
   res.send("");
 });
@@ -167,7 +166,9 @@ app.get("/disconnect", function (req, res) {
 /**
  * Start server on HTTP (will use ngrok for HTTPS forwarding)
  */
-const server = app.listen(process.env.PORT || 8000, () => {
+const server = app.listen(process.env.PORT || 8000, async () => {
+  await client.connect();
+
   console.log(`💻 Server listening on port ${server.address().port}`);
   if (!ngrokServer) {
     redirectUri = `${server.address().port}` + "/callback";
