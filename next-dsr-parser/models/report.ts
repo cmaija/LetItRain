@@ -2,6 +2,7 @@ import mongoose, { Schema } from 'mongoose'
 
 const reportSchema = new Schema({
   date: Schema.Types.Date,
+  isUploaded: Boolean,
   sales: Schema.Types.Mixed,
   taxes: Number,
   comps: Schema.Types.Mixed,
