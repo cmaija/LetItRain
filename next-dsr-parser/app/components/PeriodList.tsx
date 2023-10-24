@@ -1,8 +1,10 @@
 import { getPeriods } from '@/lib/reports/getPeriods'
 import CreatePeriodButton from './CreatePeriodButton'
+import { Period } from '@/lib/interfaces'
 
 export default async function PeriodList() {
-  let periods = await getPeriods()
+  console.log(process.env.URL)
+  let periods: any = await getPeriods()
   return (
     <div>
       <h1>Periods</h1>
@@ -11,7 +13,7 @@ export default async function PeriodList() {
           <CreatePeriodButton />
         </div>
         <div>
-          {periods.map((period) => (
+          {periods.map((period: any) => (
             <div>{period.name}</div>
           ))}
         </div>

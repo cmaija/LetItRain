@@ -31,6 +31,7 @@ export interface TotalSales {
 }
 
 export interface DayReport {
+  date: Date
   sales?: TotalsByCategory
   taxes?: number
   comps?: Comps
@@ -41,4 +42,11 @@ export interface DayReport {
 
 export interface Reports {
   [date: string]: string[][]
+}
+
+export interface Period {
+  name: string
+  start: Date
+  end: Date
+  reports?: Reports
 }

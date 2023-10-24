@@ -2,10 +2,15 @@
 import { ReactNode, createContext, useState } from 'react'
 import { Reports } from '@/lib/interfaces'
 import { generateReportDate } from '@/lib/shared'
+import { DateRange } from 'react-day-picker'
+import { addDays } from 'date-fns'
 
 export const ReportContext = createContext<any | null>(null)
 
 const ReportContextProvider = ({ children }: { children: ReactNode }) => {
+  const [periodName, setPeriodName] = useState('')
+  const [periodId, setPeriodId] = useState('')
+  const [date, setDate] = useState<DateRange | undefined>()
   const [reports, setReports] = useState<Reports>({})
   const [selectedReport, setSelectedReport] = useState<string>('')
 
@@ -48,14 +53,39 @@ const ReportContextProvider = ({ children }: { children: ReactNode }) => {
   }
 
   async function handleCompletedUpload(files: string[][]) {
+    await createNewPeriod()
     let parsedReports: Reports = {}
-    files.forEach((file) => {
+    for (let file of files) {
       let mappedCsv = cleanReport(file)
-      let reportDate = generateReportDate(mappedCsv).toString()
-      parsedReports[reportDate] = mapReport(mappedCsv)
-    })
+      let reportDate = generateReportDate(mappedCsv)
+      parsedReports[reportDate.toString()] = mapReport(mappedCsv)
+      await persistReport({
+        date: reportDate,
+        report: mappedCsv,
+      })
+    }
     setReports(parsedReports)
     setSelectedReport(Object.keys(parsedReports)[0])
+  }
+
+  async function createNewPeriod() {
+    console.log(periodName, date)
+    if (periodName && date?.from && date?.to) {
+      // await fetch('/api/periods', {
+      //   method: 'POST',
+      //   body: JSON.stringify({
+      //     name: periodName,
+      //     start: date.from,
+      //     end: date.to,
+      //   }),
+      // })
+    }
+  }
+
+  function persistCsvs() {}
+
+  async function persistReport({ date, report }: { date: Date; report: any }) {
+    // return await createReport({ date, ...report }, periodId)
   }
 
   return (
@@ -67,6 +97,10 @@ const ReportContextProvider = ({ children }: { children: ReactNode }) => {
         setSelectedReport,
         handleAddUpload,
         handleCompletedUpload,
+        periodName,
+        setPeriodName,
+        date,
+        setDate,
       }}
     >
       {children}

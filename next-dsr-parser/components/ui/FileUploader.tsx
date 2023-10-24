@@ -8,6 +8,7 @@ import { ReportContext } from '@/contexts/Reports'
 
 interface Props {
   icon?: boolean
+  onSuccess?: (id: string) => void
 }
 
 function FileUploader({ icon = false }: Props) {
