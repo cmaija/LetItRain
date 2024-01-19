@@ -1,4 +1,3 @@
-import { calculateCredits } from '@/lib/calculateCredits'
 import {
   JournalEntry,
   JournalRow,
@@ -36,6 +35,7 @@ export function JournalTable(props: Props) {
     })
     return debits
   }
+
   function calculateCredits() {
     let credits = 0
     Object.values(props.journal)?.forEach((value) => {
@@ -45,6 +45,7 @@ export function JournalTable(props: Props) {
     })
     return credits
   }
+
   return (
     <div>
       <table className="text-lg">
