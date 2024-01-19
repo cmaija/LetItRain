@@ -1,6 +1,4 @@
-import { getPeriods } from '@/lib/reports/getPeriods'
 import CreatePeriodButton from './CreatePeriodButton'
-import { Period } from '@/lib/interfaces'
 
 export default async function PeriodList() {
   // let periods: any = await getPeriods()
