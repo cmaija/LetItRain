@@ -91,7 +91,9 @@ function aggregateCategories(
   let categories = csv.slice(startIdx, endIdx)
   let totalSales: TotalsByCategory = {}
   categories.forEach((category: string[]) => {
-    let categoryNameIdx = category.findIndex((value) => value !== '\n" "')
+    let categoryNameIdx = category.findIndex(
+      (value) => value !== '\n" "' && value !== '\n '
+    )
     // regex that tests to see if a string is only spaces
     let onlySpacesRegex = /^\s*$/
     if (!onlySpacesRegex.test(category[categoryNameIdx])) {

@@ -20,14 +20,16 @@ import { parseTips } from '@/lib/parseTips'
 import { parseCash } from '@/lib/parseCash'
 import { calculateCredits } from '@/lib/calculateCredits'
 import { calculateDebits } from '@/lib/calculateDebits'
-import { convertToMoneyString } from '@/lib/shared'
+import { convertToMoneyNumber, convertToMoneyString } from '@/lib/shared'
+import { cn } from '@/lib/style'
+import DisplayAsJournalButton from './DisplayAsJournalButton'
 
 interface Props {
   report: string[][]
   date: Date
 }
 
-export default function EditingPane({ report }: Props) {
+export default function EditingPane({ report, date }: Props) {
   function parseCsv() {
     let salesInfo = parseSalesByCategory(report)
     setSalesByCategory(salesInfo?.sales)
@@ -45,6 +47,7 @@ export default function EditingPane({ report }: Props) {
     let cashInfo = parseCash(report)
     setCashPayments(cashInfo)
   }
+
   const [salesByCategory, setSalesByCategory] = useState<TotalsByCategory>()
   const [totalTaxes, setTotalTaxes] = useState<number>()
   const [comps, setComps] = useState<Comps>()
@@ -53,6 +56,8 @@ export default function EditingPane({ report }: Props) {
   const [cashPayments, setCashPayments] = useState<CashData>()
   const [credits, setCredits] = useState<number>()
   const [debits, setDebits] = useState<number>()
+  const [totalsValid, setTotalsValid] = useState<boolean>()
+
   useEffect(() => {
     if (report && report.length > 0) {
       parseCsv()
@@ -83,6 +88,14 @@ export default function EditingPane({ report }: Props) {
         cashData: cashPayments,
       })
       setDebits(totalDebits)
+
+      if (
+        convertToMoneyNumber(totalCredits) == convertToMoneyNumber(totalDebits)
+      ) {
+        setTotalsValid(true)
+      } else {
+        setTotalsValid(false)
+      }
     }
   }, [
     report,
@@ -93,6 +106,10 @@ export default function EditingPane({ report }: Props) {
     tips,
     cashPayments,
   ])
+
+  const totalsValidClassNames = 'bg-green-300'
+  const totalsInvalidClassNames = 'bg-red-300'
+
   return (
     <div className="relative flex flex-col w-full min-h-full gap-4 pr-4">
       <div className="flex w-full flex-row justify-between items-start flex-wrap">
@@ -124,7 +141,17 @@ export default function EditingPane({ report }: Props) {
           {tips && <TipsTable tips={tips} onChangeTips={setTips} />}
         </div>
       </div>
-      <div className="flex flex-row justify-between items-end">
+      <div
+        className={cn(
+          'flex flex-row justify-between items-end py-4 px-2 rounded-md',
+          totalsValid ? totalsValidClassNames : totalsInvalidClassNames
+        )}
+        title={
+          totalsValid
+            ? 'Looks good! Debits match credits.'
+            : 'Error! Debits do not match credits.'
+        }
+      >
         <div className="flex flex-row gap-4">
           <strong>Totals</strong>
           <strong>{convertToMoneyString(debits || 0)}</strong>
@@ -133,6 +160,15 @@ export default function EditingPane({ report }: Props) {
           <strong>{convertToMoneyString(credits || 0)}</strong>
         </div>
       </div>
+      <DisplayAsJournalButton
+        salesByCategory={salesByCategory}
+        totalTaxes={totalTaxes}
+        comps={comps}
+        nonCashPayments={nonCashPayments}
+        tips={tips}
+        cashPayments={cashPayments}
+        date={date}
+      />
     </div>
   )
 }

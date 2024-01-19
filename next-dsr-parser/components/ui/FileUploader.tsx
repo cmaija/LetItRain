@@ -8,10 +8,11 @@ import { ReportContext } from '@/contexts/Reports'
 
 interface Props {
   icon?: boolean
+  title?: string
   onSuccess?: (id: string) => void
 }
 
-function FileUploader({ icon = false }: Props) {
+function FileUploader({ icon = false, title = '' }: Props) {
   const { handleCompletedUpload, handleAddUpload } = useContext(ReportContext)
   const [files, setFiles] = useState<File[]>()
 
@@ -50,6 +51,7 @@ function FileUploader({ icon = false }: Props) {
         })
       )
     })
+
     return parsedResults
   }
 
@@ -67,10 +69,13 @@ function FileUploader({ icon = false }: Props) {
   }
 
   return (
-    <div className="p-2">
+    <div className="p-2" title={title}>
       {icon ? (
-        <Button size="icon">
-          <Label htmlFor="reports" className="relative">
+        <Button size="icon" variant="outline">
+          <Label
+            htmlFor="reports"
+            className="relative h-10 w-10 flex items-center justify-center cursor-pointer"
+          >
             <Input
               id="reports"
               type="file"
@@ -78,20 +83,22 @@ function FileUploader({ icon = false }: Props) {
               className="invisible absolute top-0 left-0 w-0 h-0"
               onChange={handleSingleFileChange}
             />
-            <PlusIcon className="cursor-pointer" />
+            <PlusIcon />
           </Label>
         </Button>
       ) : (
         <>
           <div className="flex flex-col items-start">
-            <Label htmlFor="reports">
-              Upload Reports
+            <Label htmlFor="reports" className="text-lg">
+              Select .csv files to be processed and transformed into DSR journal
+              entries
               <Input
                 id="reports"
                 type="file"
                 accept=".csv"
                 multiple
                 onChange={handleFileChange}
+                className="my-3"
               />
             </Label>
           </div>

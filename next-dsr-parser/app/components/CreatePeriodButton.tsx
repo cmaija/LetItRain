@@ -11,6 +11,7 @@ import FileUploader from '@/components/ui/FileUploader'
 import { useRouter } from 'next/navigation'
 import { ReportContext } from '@/contexts/Reports'
 import DateRangePicker from '@/components/ui/DateRangePicker'
+import { Button } from '@/components/ui/Button'
 
 export default function CreatePeriodButton() {
   const { periodName, setPeriodName, date, setDate } = useContext(ReportContext)
@@ -19,21 +20,31 @@ export default function CreatePeriodButton() {
 
   function handleUploadSuccess(id: string) {
     setOpen(false)
-    router.push(`/period/${id}`)
+    router.push(`/period`)
   }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger>Add New Period</DialogTrigger>
+      <DialogTrigger>
+        <Button variant="secondary" className="px-6 py-4 h-auto">
+          <h1 className="text-2xl font-semibold">
+            Generate New Journal Entries
+          </h1>
+        </Button>
+      </DialogTrigger>
       <DialogContent>
-        <DialogHeader>Add New Period</DialogHeader>
-        <Input
+        <DialogHeader>
+          <h1 className="text-xl font-semibold">
+            Generate New Journal Entries
+          </h1>
+        </DialogHeader>
+        {/* <Input
           placeholder="P10 1 of 1"
           value={periodName}
           onChange={(e) => setPeriodName(e.target.value)}
-        />
+        /> */}
         <FileUploader onSuccess={handleUploadSuccess} />
-        <DateRangePicker date={date} setDate={setDate} />
+        {/* <DateRangePicker date={date} setDate={setDate} /> */}
       </DialogContent>
     </Dialog>
   )

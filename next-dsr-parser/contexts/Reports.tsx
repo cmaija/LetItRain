@@ -4,6 +4,7 @@ import { Reports } from '@/lib/interfaces'
 import { generateReportDate } from '@/lib/shared'
 import { DateRange } from 'react-day-picker'
 import { addDays } from 'date-fns'
+import { useRouter } from 'next/navigation'
 
 export const ReportContext = createContext<any | null>(null)
 
@@ -13,6 +14,7 @@ const ReportContextProvider = ({ children }: { children: ReactNode }) => {
   const [date, setDate] = useState<DateRange | undefined>()
   const [reports, setReports] = useState<Reports>({})
   const [selectedReport, setSelectedReport] = useState<string>('')
+  const router = useRouter()
 
   function cleanReport(file: string[]): string[][] {
     let filteredJunkOut = file.filter((row: any) => {
@@ -34,7 +36,9 @@ const ReportContextProvider = ({ children }: { children: ReactNode }) => {
       })
       .filter(
         (item: any) =>
-          !Object.values(item).every((item) => item === '' || item === ' ')
+          !Object.values(item).every(
+            (item) => item === '' || item === ' ' || item === '\n'
+          )
       )
     return mappedCsv
   }
@@ -53,7 +57,7 @@ const ReportContextProvider = ({ children }: { children: ReactNode }) => {
   }
 
   async function handleCompletedUpload(files: string[][]) {
-    await createNewPeriod()
+    let newPeriodId = await createNewPeriod()
     let parsedReports: Reports = {}
     for (let file of files) {
       let mappedCsv = cleanReport(file)
@@ -66,19 +70,21 @@ const ReportContextProvider = ({ children }: { children: ReactNode }) => {
     }
     setReports(parsedReports)
     setSelectedReport(Object.keys(parsedReports)[0])
+    router.push(`/period`)
   }
 
   async function createNewPeriod() {
-    console.log(periodName, date)
     if (periodName && date?.from && date?.to) {
-      // await fetch('/api/periods', {
-      //   method: 'POST',
-      //   body: JSON.stringify({
-      //     name: periodName,
-      //     start: date.from,
-      //     end: date.to,
-      //   }),
-      // })
+      const period = await fetch('/api/periods', {
+        method: 'POST',
+        body: JSON.stringify({
+          name: periodName,
+          start: date.from,
+          end: date.to,
+        }),
+      })
+
+      return period
     }
   }
 
