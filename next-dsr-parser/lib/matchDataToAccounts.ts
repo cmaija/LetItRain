@@ -82,7 +82,9 @@ function matchComps(journalEntry: JournalEntry, comps?: Comps) {
       qboAccounts[accountNumber as Account]?.matchedCategoryNames
     for (let accountName of potentialAccountNames) {
       if (comps[accountName]) {
-        journalEntry[accountNumber as Account] = comps[accountName]
+        let currentAmount = journalEntry[accountNumber as Account] || 0
+        journalEntry[accountNumber as Account] =
+          comps[accountName] + currentAmount
       }
     }
   }
