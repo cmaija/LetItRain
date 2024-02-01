@@ -91,7 +91,7 @@ export const qboAccounts = {
   },
   '7208': {
     name: 'CONTROLLABLE EXPENSES:Marketing -:Comps & Promotion:Production Error',
-    matchedCategoryNames: ['Food Error'],
+    matchedCategoryNames: ['Food Error', 'Bar Production Error'],
     order: 18,
   },
   '7203': {
